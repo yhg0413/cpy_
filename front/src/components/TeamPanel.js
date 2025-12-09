@@ -23,7 +23,12 @@ const TeamPanel = ({ team, draftHistory, currentStepIndex }) => {
            return (
             <div key={`ban-${i}`} className={`slot ban ${charName ? 'filled' : ''} ${isCurrentBan ? 'active-turn' : ''}`}>
               {charName ? (
-                 <img src={getCharImage(charName)} alt={charName} className="ban-img" />
+                 // [FIX] "NO BAN"일 경우 텍스트 표시, 아니면 이미지 표시
+                 charName === "NO BAN" ? (
+                   <span style={{color: '#555', fontSize: '0.7rem', fontWeight: 'bold'}}>기권</span>
+                 ) : (
+                   <img src={getCharImage(charName)} alt={charName} className="ban-img" />
+                 )
               ) : (isCurrentBan ? '...' : '')}
             </div>
            );
@@ -39,13 +44,14 @@ const TeamPanel = ({ team, draftHistory, currentStepIndex }) => {
                                  i === picks.length;
            const charName = picks[i]?.char;
 
+           const hasImage = charName && charName !== "NO BAN";
            // 스타일 객체 동적 생성 (배경 이미지 적용)
-           const slotStyle = charName ? {
+           const slotStyle = hasImage ? {
              backgroundImage: isBlue 
                ? `linear-gradient(90deg, rgba(21, 101, 192, 0.9) 0%, rgba(21, 101, 192, 0.4) 100%), url(${getCharImage(charName)})`
                : `linear-gradient(-90deg, rgba(198, 40, 40, 0.9) 0%, rgba(198, 40, 40, 0.4) 100%), url(${getCharImage(charName)})`,
              backgroundSize: 'cover',
-             backgroundPosition: 'top 40% center'
+             backgroundPosition: 'top center'
            } : {};
 
            return (
@@ -55,7 +61,9 @@ const TeamPanel = ({ team, draftHistory, currentStepIndex }) => {
               style={slotStyle}
             >
               <span className="slot-label">PICK {i + 1}</span>
-              <span className="char-name-text">{charName}</span>
+              <span className="char-name-text">
+                {charName === "NO BAN" ? "기권" : charName}
+              </span>
             </div>
            );
         })}

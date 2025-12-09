@@ -4,7 +4,7 @@ import LobbyPage from './pages/LobbyPage'; // 분리된 페이지
 import GamePage from './pages/GamePage';   // 분리된 페이지
 import './App.css'; // 전역 스타일
 
-const SERVER_URL = "/";
+const SERVER_URL = "http://localhost:4000";
 
 const App = () => {
   const [socket, setSocket] = useState(null);
@@ -14,6 +14,7 @@ const App = () => {
   
   // 유저/방 정보
   const [roomId, setRoomId] = useState('');
+  const [nickname, setNickname] = useState(''); // [NEW]
   const [myTeam, setMyTeam] = useState(null);
 
   // 1. 소켓 연결 (앱 시작 시 한 번만)
@@ -36,10 +37,48 @@ const App = () => {
     return () => newSocket.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    // 세션 스토리지에 정보가 남아있으면 자동으로 join 시도
+    const savedRoom = sessionStorage.getItem('cyp_roomId');
+    const savedNick = sessionStorage.getItem('cyp_nickname');
+
+    if (savedRoom && savedNick) {
+      console.log(`자동 재접속 시도: ${savedRoom} / ${savedNick}`);
+      setRoomId(savedRoom);
+      setNickname(savedNick);
+      // 소켓 연결되자마자 join 요청
+      socket.emit('join_room', { roomId: savedRoom, nickname: savedNick });
+    }
+  }, [socket]);
+
   // 2. 로비에서 입장 버튼 클릭 시 호출
-  const handleJoin = (inputRoomId) => {
+  const handleJoin = (inputRoomId, inputNickname) => {
     setRoomId(inputRoomId);
-    socket.emit('join_room', inputRoomId);
+    setNickname(inputNickname);
+    
+    // 세션에 저장 (새로고침 대비)
+    sessionStorage.setItem('cyp_roomId', inputRoomId);
+    sessionStorage.setItem('cyp_nickname', inputNickname);
+    socket.emit('join_room', { roomId: inputRoomId, nickname: inputNickname });
+  };
+
+  const handleLeave = () => {
+    if (!socket) return;
+    
+    // 1. 서버에 "나 간다"고 알림
+    socket.emit('leave_room', roomId);
+
+    // 2. [핵심] 재접속 방지: 세션 스토리지 삭제
+    sessionStorage.removeItem('cyp_roomId');
+    sessionStorage.removeItem('cyp_nickname');
+
+    // 3. 상태 초기화 및 로비로 이동
+    setRoomId('');
+    setNickname('');
+    setMyTeam(null);
+    setView('lobby');
   };
 
   // --- 화면 렌더링 분기 ---
@@ -57,6 +96,8 @@ const App = () => {
         socket={socket} 
         roomId={roomId} 
         myTeam={myTeam} 
+        nickname={nickname}
+        onLeave={handleLeave}
       />
     );
   }
