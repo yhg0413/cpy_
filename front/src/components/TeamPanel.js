@@ -51,7 +51,7 @@ const TeamPanel = ({ team, draftHistory, currentStepIndex }) => {
                ? `linear-gradient(90deg, rgba(21, 101, 192, 0.9) 0%, rgba(21, 101, 192, 0.4) 100%), url(${getCharImage(charName)})`
                : `linear-gradient(-90deg, rgba(198, 40, 40, 0.9) 0%, rgba(198, 40, 40, 0.4) 100%), url(${getCharImage(charName)})`,
              backgroundSize: 'cover',
-             backgroundPosition: 'top center'
+             backgroundPosition: 'top 40% center'
            } : {};
 
            return (
