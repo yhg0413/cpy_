@@ -4,7 +4,7 @@ import LobbyPage from './pages/LobbyPage'; // 분리된 페이지
 import GamePage from './pages/GamePage';   // 분리된 페이지
 import './App.css'; // 전역 스타일
 
-const SERVER_URL = "http://localhost:4000";
+const SERVER_URL = "/";
 
 const App = () => {
   const [socket, setSocket] = useState(null);
