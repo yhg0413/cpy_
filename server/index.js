@@ -9,6 +9,8 @@ const io = new Server(server, {
   cors: { origin: "*" } // React 개발 서버 접속 허용
 });
 
+const PORT = process.env.PORT || 4000;
+
 // 게임 상태 저장소 (메모리)
 const rooms = {};
 
@@ -174,6 +176,6 @@ app.get('/^\/.*$', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-server.listen(4000, () => {
+server.listen(PORT, '0.0.0.0',() => {
   console.log('Server running on port 4000');
 });
