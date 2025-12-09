@@ -1,0 +1,321 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: 'Noto Sans KR', sans-serif;
+  overflow: hidden; /* 스크롤 방지 */
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+/* --- 상태바 --- */
+.status-bar {
+  height: 70px;
+  background-color: #1a1a1a;
+  border-bottom: 2px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+.set-info { font-size: 1.4rem; font-weight: bold; color: #888; }
+.turn-info { font-size: 1.8rem; font-weight: 900; }
+.next-set-btn {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.next-set-btn:hover { background-color: #1b5e20; }
+
+/* --- 메인 보드 --- */
+.board {
+  flex: 1;
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+  height: calc(100% - 70px);
+}
+
+/* --- 팀 패널 --- */
+.team-panel {
+  width: 320px;
+  background-color: #181818;
+  border: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+}
+.team-header {
+  padding: 20px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: white;
+}
+.team-blue .team-header { background-color: #1565c0; }
+.team-red .team-header { background-color: #c62828; }
+
+/* 밴 슬롯 */
+.ban-container {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px;
+  background-color: #222;
+  min-height: 60px; /* 높이 확보 */
+}
+.slot.ban {
+  width: 50px;  /* 고정 크기 */
+  height: 50px; /* 고정 크기 */
+  background-color: #151515;
+  border: 1px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.slot.ban.filled { text-decoration: line-through; color: #555; background-color: #2a2a2a; }
+
+.ban-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 밴 슬롯 이미지도 꽉 차게 */
+  filter: grayscale(100%);
+  opacity: 0.8;
+}
+
+/* 픽 슬롯 */
+.pick-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+}
+.slot.pick {
+  flex: 1;
+  background-color: #252525;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+  transition: all 0.2s;
+  
+  /* 배경 이미지 설정 시 반복 안 함 */
+  background-repeat: no-repeat;
+  background-position: top 50% center; /* 얼굴 위주로 나오게 조정 */
+  background-size: cover;
+}
+.team-blue .slot.pick { border-left: 6px solid #1565c0; }
+.team-red .slot.pick { border-right: 6px solid #c62828; }
+
+.team-blue .slot.pick.filled { border-left: 10px solid #1565c0; background: linear-gradient(90deg, #1a2735 0%, #252525 100%); }
+.team-red .slot.pick.filled { border-right: 10px solid #c62828; background: linear-gradient(-90deg, #351a1a 0%, #252525 100%); }
+
+/* 턴 하이라이트 */
+.active-turn { border-color: white !important; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+.team-blue .slot.pick.active-turn { border-color: #4fc3f7 !important; }
+.team-red .slot.pick.active-turn { border-color: #ef9a9a !important; }
+
+.slot-label { font-size: 0.9rem; color: #666; font-weight: bold; }
+.char-name-text {
+  position: relative;
+  z-index: 2; /* 이미지 위로 올림 */
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* 가독성 확보 */
+  font-size: 1.3rem;
+}
+
+.slot-label {
+  position: relative;
+  z-index: 2;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+/* --- 센터 패널 --- */
+.center-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.timer-box {
+  background-color: #222;
+  padding: 10px;
+  text-align: center;
+  border: 2px solid #444;
+}
+.timer-box.urgent { border-color: #d32f2f; color: #ef5350; }
+.timer-text { font-size: 3.5rem; font-weight: 900; line-height: 1; }
+.timer-label { font-size: 0.8rem; letter-spacing: 2px; color: #888; }
+
+.champion-pool {
+  flex: 1;
+  display: grid;
+  /* 65px 크기의 정사각형 그리드 자동 배치 */
+  grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+  grid-auto-rows: 65px; 
+  gap: 5px;
+  overflow-y: auto;
+  padding-right: 5px;
+  background-color: #1a1a1a;
+  border-radius: 5px;
+  align-content: start; /* 아이템이 적을 때 위쪽 정렬 */
+}
+
+.char-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #222;
+  border: 1px solid #444;
+  cursor: pointer;
+  overflow: hidden; /* 이미지가 튀어나가지 않게 */
+  transition: transform 0.1s, border-color 0.1s;
+}
+.char-card:hover {
+  transform: scale(1.05);
+  border-color: white;
+  z-index: 10;
+}
+
+.char-card.picked,
+.char-card.banned,
+.char-card.global-banned {
+  cursor: not-allowed;
+  border-color: #222;
+  pointer-events: none; /* 클릭 자체를 막음 */
+}
+
+.char-card.picked .char-img {
+  filter: grayscale(100%) brightness(0.3);
+}
+
+.char-card.global-banned::after {
+  content: "🔒"; /* 자물쇠 이모지 (또는 이미지) */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  z-index: 5;
+  opacity: 0.5;
+}
+
+.char-card.global-banned .char-name-overlay {
+  color: #555;
+  background: rgba(0,0,0,0.9);
+}
+
+/* 밴 오버레이 (X 표시 등) */
+.ban-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ban-overlay::after {
+  content: "X";
+  color: #ff4444;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.char-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 핵심: 비율 유지하며 꽉 채움 (잘림 발생 가능) */
+  display: block;
+}
+
+.char-name-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  color: #eee;
+  font-size: 0.7rem; /* 글자 크기 작게 */
+  text-align: center;
+  padding: 2px 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.ban-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 3;
+}
+.ban-overlay::after {
+  content: "X";
+  color: #555;
+  font-size: 3rem;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.fearless-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 20px;
+}
+
+.fearless-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #666;
+  width: 150px;
+  line-height: 1.2;
+}
+
+.fearless-list {
+  flex: 1;
+  display: flex;
+  gap: 5px;
+  overflow-x: auto; /* 많아지면 가로 스크롤 */
+  height: 80%;
+}
+
+.fearless-list::-webkit-scrollbar { height: 5px; }
+.fearless-list::-webkit-scrollbar-thumb { background: #333; }
+
+.fearless-item {
+  min-width: 60px;
+  height: 100%;
+  background-color: #222;
+  position: relative;
+  border: 1px solid #333;
+}
+
+.fearless-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%); /* 흑백 처리 */
+  opacity: 0.5;
+}
